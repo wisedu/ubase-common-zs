@@ -201,17 +201,23 @@
         return url + '?rv=' + resourceVersion
     }
 
-    Utils.post = function (url, data) {
+    Utils.post = function (url, data, ignoreCode) {
         showLoading()
         return fetch(url, {
             method: "POST",
-            body: JSON.stringify(data),
+            body: data?JSON.stringify(data):{},
             headers: {
                 "Content-Type": "application/json"
             },
         }).then(function(response) {
             hideLoading()
             return response.json()
+        }).then(function(res) {
+            if (res.code  === '0' || res.code === 0 || ignoreCode) {
+                return res
+            } else {
+                throw res
+            }
         })
     }
 
