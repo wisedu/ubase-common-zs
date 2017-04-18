@@ -46,6 +46,10 @@
         gConfig = transition.config
         gRouter = transition.router
 
+        if(location.host.indexOf('cpdaily.com') !== -1 || location.host.indexOf('wisedu.com') !== -1){
+            gConfig['RESOURCE_SERVER'] = 'http://feres.cpdaily.com'
+        }
+
         gResource = getResource()
 
         loadCss()
@@ -202,8 +206,11 @@
     }
 
     Utils.post = function (url, data, ignoreCode) {
-        showLoading()
+        if(!(data && data._showLoading === false)){
+            showLoading()
+        }
         return fetch(url, {
+            credentials: 'include',
             method: "POST",
             body: data?JSON.stringify(data):{},
             headers: {
@@ -213,6 +220,9 @@
             hideLoading()
             return response.json()
         }).then(function(res) {
+            if(res['unauthorizedAjax-d3472c24-cc96-47ba-9498-27aaf2692cd3'] == '500'){
+                window.parent.location.href = '/enroll-authen/login/index.html'
+            }
             if (res.code  === '0' || res.code === 0 || ignoreCode) {
                 return res
             } else {
