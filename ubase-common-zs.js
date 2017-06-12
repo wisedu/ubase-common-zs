@@ -46,7 +46,7 @@
         gConfig = transition.config
         gRouter = transition.router
 
-        if(location.host.indexOf('cpdaily.com') !== -1 || location.host.indexOf('wisedu.com') !== -1){
+        if(location.host.indexOf('localhost') === -1 && location.host.indexOf('172.') === -1){
             gConfig['RESOURCE_SERVER'] = 'http://feres.cpdaily.com'
         }
 
@@ -214,10 +214,13 @@
             method: "POST",
             body: data?JSON.stringify(data):{},
             headers: {
+                "Accept":"application/json, text/plain, */*",
                 "Content-Type": "application/json"
             },
         }).then(function(response) {
-            hideLoading()
+            if(!(data && data._showLoading === false)){
+                hideLoading()
+            }
             return response.json()
         }).then(function(res) {
             if(res['unauthorizedAjax-d3472c24-cc96-47ba-9498-27aaf2692cd3'] == '500'){
